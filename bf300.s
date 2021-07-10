@@ -33,10 +33,11 @@ main:
 	leaq	(%rsp), %rsi	# Read into (%rsp)
 	syscall			# read(0, (%rsp), 1);
 	incl	%edi		# Set %edi to 1, for write
-	cmpl	%edx, %eax	# EOF ? (%eax < 1)
-	jl	.Leof
+	movl	%eax, %ecx	# Store return value in %ecx
 	movb	(%rsi), %al	# cmpb imm, %al is the smallest cmp
 	leal	.LSleft, %esi	# Preload first string
+	cmpl	%edx, %ecx	# EOF ? (%ecx < 1)
+	jl	.Leof
 	cmpb	$60, %al	# '<' ?
 	je	.Lleft
 	cmpb	$62, %al	# '>' ?
@@ -62,7 +63,7 @@ main:
 .Leof:
 	cmpl	%edx, %ebp	# Loop counter < 1 ? (i.e., 0)
 	jge	.Lexit
-	leal	.LSepilogue, %esi
+	addl	$80, %esi	# .LSepilogue
 	pushq	$11
 	popq	%rdx
 	movl	%ebx, %eax
@@ -73,35 +74,32 @@ main:
 	popq	%rax		# _exit(%edi);
 	syscall
 .Lright:
-	addl	%ebx, %esi	# aka, %esi + 4
+	addl	%ebx, %esi	# aka, %esi + 4 (.LSright)
 .Lleft:
 	pushq	%rbx		# aka, 4
 	jmp	.Lwrite
 .Ldec:
-	subl	$5, %esi	# 13 - 5 = 8
+	subl	$5, %esi	# 13 - 5 = 8 (.LSdec)
 .Linc:
-	addl	$13, %esi
-.Ldecinc:
+	addl	$13, %esi	# .LSinc
 	pushq	$5
 	jmp	.Lwrite
 .Lgetchar:
-	addl	$18, %esi
-	jmp	.Lgetcharputchar
+	subl	$13, %esi	# 31 - 13 = 18 (.LSgetchar)
 .Lputchar:
-	addl	$31, %esi
-.Lgetcharputchar:
+	addl	$31, %esi	# .LSputchar
 	pushq	$13
 	jmp	.Lwrite
 .Lopenloop:
 	incl	%ebp		# Increment loop counter
-	addl	$44, %esi
+	addl	$44, %esi	# .LSopenloop
 	pushq	$10
 	jmp	.Lwrite
 .Lcloseloop:
 	decl	%ebp		# Decrement loop counter
 	cmpl	$-1, %ebp	# Loop counter < 0 ?
 	je	.Lexit		# %edi == 1 (from the write(2) call)
-	addl	$89, %esi
+	addl	$89, %esi	# .LScloseloop
 	pushq	%rdi		# %rdi == 1 (from the write(2) call)
 	jmp	.Lwrite
 
