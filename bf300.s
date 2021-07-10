@@ -17,7 +17,6 @@
 	.text
 	.globl	main
 main:
-	movb	$4, %bl		# Store write(2) system call
 	incl	%edi		# Write prologue
 	leal	.LSprologue, %esi
 	pushq	$26
@@ -53,25 +52,25 @@ main:
 	jmp	.Lparse		# Comment character, skip.
 .Lwrite:
 	popq	%rdx		# Number of characters to write
-	movl	%ebx, %eax
+	movb	$4, %al
 	syscall			# write(1, string, length);
 	jmp	.Lparse
 .Leof:
-	cmpl	%edx, %ebp	# Loop counter < 1 ? (i.e., 0)
+	cmpl	%edx, %ebx	# Loop counter < 1 ? (i.e., 0)
 	jge	.Lexit
 	addl	$54, %esi
 	pushq	$11
 	popq	%rdx
-	movl	%ebx, %eax
+	movb	$4, %al
 	syscall
 	xorl	%edi, %edi	# Get ready to exit
 .Lexit:
 	movb	$1, %al		# _exit(%edi);
 	syscall
 .Lright:
-	addl	%ebx, %esi	# aka, %esi + 4
+	addl	$4, %esi
 .Lleft:
-	pushq	%rbx		# aka, 4
+	pushq	$4
 	jmp	.Lwrite
 .Ldec:
 	subl	$5, %esi	# 13 - 5 = 8
@@ -86,13 +85,13 @@ main:
 	pushq	$13
 	jmp	.Lwrite
 .Lopenloop:
-	incl	%ebp		# Increment loop counter
+	incl	%ebx		# Increment loop counter
 	addl	$44, %esi
 	pushq	$10
 	jmp	.Lwrite
 .Lcloseloop:
-	decl	%ebp		# Decrement loop counter
-	cmpl	$-1, %ebp	# Loop counter < 0 ?
+	decl	%ebx		# Decrement loop counter
+	cmpl	$-1, %ebx	# Loop counter < 0 ?
 	je	.Lexit		# %rdi == 1 (from the write(2) call)
 	addl	$63, %esi
 	pushq	%rdi		# %rdi == 1 (from the write(2) call)
