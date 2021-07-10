@@ -32,7 +32,7 @@ Size
 ```
 $ size bf300.o
 text    data    bss     dec     hex
-247     0       0       247     f7
+246     0       0       246     f6
 ```
 
 License

@@ -56,7 +56,7 @@ main:
 .Lwrite:
 	popq	%rdx		# Number of characters to write
 	movl	%ebx, %eax
-	syscall			# write(1, string, sizeof(string));
+	syscall			# write(1, string, length);
 	jmp	.Lparse
 .Leof:
 	cmpl	%edx, %ebp	# Loop counter < 1 ? (i.e., 0)
@@ -68,8 +68,7 @@ main:
 	syscall
 	xorl	%edi, %edi	# Get ready to exit
 .Lexit:
-	pushq	$1
-	popq	%rax		# _exit(%edi);
+	movb	$1, %al		# _exit(%edi);
 	syscall
 .Lright:
 	addl	%ebx, %esi	# aka, %esi + 4
@@ -96,7 +95,7 @@ main:
 .Lcloseloop:
 	decl	%ebp		# Decrement loop counter
 	cmpl	$-1, %ebp	# Loop counter < 0 ?
-	je	.Lexit		# %edi == 1 (from the write(2) call)
+	je	.Lexit		# %rdi == 1 (from the write(2) call)
 	addl	$63, %esi
 	pushq	%rdi		# %rdi == 1 (from the write(2) call)
 	jmp	.Lwrite
