@@ -1,8 +1,8 @@
 # bf300 Makefile
 
 all:
-	as -g -o rt.o rt.s
-	as -g -o bf300.o bf300.s
+	gas -g -o rt.o rt.s
+	gas -g -o bf300.o bf300.s
 	ld -e main -nostdlib -nopie -o bf300 rt.o bf300.o
 	strip bf300
 	strip -R .bss bf300

@@ -28,10 +28,10 @@ main:
 	leaq	(%rsp), %rsi	# Read into (%rsp)
 	syscall			# read(0, (%rsp), 1);
 	incl	%edi		# Set %edi to 1, for write
-	movl	%eax, %ecx	# Store return value in %ecx
+	xchg	%ebp, %eax	# Store return value in %ebp
 	movb	(%rsi), %al	# cmpb imm, %al is the smallest cmp
 	leal	.LS, %esi	# Preload first string
-	cmpl	%edx, %ecx	# EOF ? (%ecx < 1)
+	cmpl	%edx, %ebp	# EOF ? (%ebp < 1)
 	jl	.Leof
 	cmpb	$60, %al	# '<' ?
 	je	.Lleft
