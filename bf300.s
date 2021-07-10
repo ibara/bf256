@@ -35,7 +35,7 @@ main:
 	incl	%edi		# Set %edi to 1, for write
 	movl	%eax, %ecx	# Store return value in %ecx
 	movb	(%rsi), %al	# cmpb imm, %al is the smallest cmp
-	leal	.LSleft, %esi	# Preload first string
+	leal	.LS, %esi	# Preload first string
 	cmpl	%edx, %ecx	# EOF ? (%ecx < 1)
 	jl	.Leof
 	cmpb	$60, %al	# '<' ?
@@ -63,7 +63,7 @@ main:
 .Leof:
 	cmpl	%edx, %ebp	# Loop counter < 1 ? (i.e., 0)
 	jge	.Lexit
-	addl	$80, %esi	# .LSepilogue
+	addl	$54, %esi
 	pushq	$11
 	popq	%rdx
 	movl	%ebx, %eax
@@ -74,62 +74,46 @@ main:
 	popq	%rax		# _exit(%edi);
 	syscall
 .Lright:
-	addl	%ebx, %esi	# aka, %esi + 4 (.LSright)
+	addl	%ebx, %esi	# aka, %esi + 4
 .Lleft:
 	pushq	%rbx		# aka, 4
 	jmp	.Lwrite
 .Ldec:
-	subl	$5, %esi	# 13 - 5 = 8 (.LSdec)
+	subl	$5, %esi	# 13 - 5 = 8
 .Linc:
-	addl	$13, %esi	# .LSinc
+	addl	$13, %esi
 	pushq	$5
 	jmp	.Lwrite
 .Lgetchar:
-	subl	$13, %esi	# 31 - 13 = 18 (.LSgetchar)
+	subl	$13, %esi	# 31 - 13 = 18
 .Lputchar:
-	addl	$31, %esi	# .LSputchar
+	addl	$31, %esi
 	pushq	$13
 	jmp	.Lwrite
 .Lopenloop:
 	incl	%ebp		# Increment loop counter
-	addl	$44, %esi	# .LSopenloop
+	addl	$44, %esi
 	pushq	$10
 	jmp	.Lwrite
 .Lcloseloop:
 	decl	%ebp		# Decrement loop counter
 	cmpl	$-1, %ebp	# Loop counter < 0 ?
 	je	.Lexit		# %edi == 1 (from the write(2) call)
-	addl	$89, %esi	# .LScloseloop
+	addl	$63, %esi
 	pushq	%rdi		# %rdi == 1 (from the write(2) call)
 	jmp	.Lwrite
-
-.LSleft:
-	.ascii	"--p;"		# 4
-
-.LSright:
-	.ascii	"++p;"		# 4
-
-.LSdec:
-	.ascii	"--*p;"		# 5
-
-.LSinc:
-	.ascii	"++*p;"		# 5
-
-.LSgetchar:
-	.ascii	"*p=getchar();"	# 13
-
-.LSputchar:
-	.ascii	"putchar(*p); "	# 13
-
-.LSopenloop:
-	.ascii	"while(*p){"	# 10
 
 .LSprologue:
 	.ascii	"char a[65536],*p=a;main(){"	# 26
 
-.LSepilogue:
+.LS:
+	.ascii	"--p;"		# 4
+	.ascii	"++p;"		# 4
+	.ascii	"--*p;"		# 5
+	.ascii	"++*p;"		# 5
+	.ascii	"*p=getchar();"	# 13
+	.ascii	"putchar(*p); "	# 13
+	.ascii	"while(*p){"	# 10
 	.ascii	"return 0;"	# 9
-
-.LScloseloop:
 	.ascii	"}"		# 1
 	.ascii	"\n"		# 1
