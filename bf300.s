@@ -89,9 +89,9 @@ main:
 	jmp	.Lwrite
 .Lcloseloop:
 	decl	%ebx		# Decrement loop counter
-	js	.Lexit		# %ebx < 0 ? (%rdi == 1 (from the write(2) call)
+	js	.Lexit		# %ebx < 0 ? (%rdi == 1 from the write(2) call)
 	addl	$63, %esi
-	movl	%edi, %edx	# %edx == 1 (from the write(2) call)
+	movb	$1, %dl
 	jmp	.Lwrite
 
 .LSprologue:
