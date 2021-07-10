@@ -17,8 +17,7 @@
 	.text
 	.globl	main
 main:
-	pushq	$4
-	popq	%rbx		# Store write(2) system call
+	movb	$4, %bl		# Store write(2) system call
 	xorl	%ebp, %ebp	# Loop counter
 	pushq	$1
 	popq	%rdi		# Write prologue
@@ -26,8 +25,7 @@ main:
 	pushq	$26
 	jmp	.Lwrite
 .Lparse:
-	pushq	$3
-	popq	%rax		# Load read(2) system call
+	movb	$3, %al		# Load read(2) system call
 	movl	%edi, %edx	# Read one character (%edi == 1)
 	xorl	%edi, %edi	# Read from stdin
 	leaq	(%rsp), %rsi	# Read into (%rsp)
