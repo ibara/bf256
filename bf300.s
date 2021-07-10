@@ -19,7 +19,7 @@
 main:
 	incl	%edi		# Write prologue
 	leal	.LSprologue, %esi
-	pushq	$26
+	movb	$26, %dl
 	jmp	.Lwrite
 .Lparse:
 	movb	$3, %al		# Load read(2) system call
@@ -51,7 +51,6 @@ main:
 	je	.Lcloseloop
 	jmp	.Lparse		# Comment character, skip.
 .Lwrite:
-	popq	%rdx		# Number of characters to write
 	movb	$4, %al
 	syscall			# write(1, string, length);
 	jmp	.Lparse
@@ -69,31 +68,30 @@ main:
 .Lright:
 	addl	$4, %esi
 .Lleft:
-	pushq	$4
+	movb	$4, %dl
 	jmp	.Lwrite
 .Ldec:
 	subl	$5, %esi	# 13 - 5 = 8
 .Linc:
 	addl	$13, %esi
-	pushq	$5
+	movb	$5, %dl
 	jmp	.Lwrite
 .Lgetchar:
 	subl	$13, %esi	# 31 - 13 = 18
 .Lputchar:
 	addl	$31, %esi
-	pushq	$13
+	movb	$13, %dl
 	jmp	.Lwrite
 .Lopenloop:
 	incl	%ebx		# Increment loop counter
 	addl	$44, %esi
-	pushq	$10
+	movb	$10, %dl
 	jmp	.Lwrite
 .Lcloseloop:
 	decl	%ebx		# Decrement loop counter
-	cmpl	$-1, %ebx	# Loop counter < 0 ?
-	je	.Lexit		# %rdi == 1 (from the write(2) call)
+	js	.Lexit		# %ebx < 0 ? (%rdi == 1 (from the write(2) call)
 	addl	$63, %esi
-	pushq	%rdi		# %rdi == 1 (from the write(2) call)
+	movl	%edi, %edx	# %edx == 1 (from the write(2) call)
 	jmp	.Lwrite
 
 .LSprologue:
