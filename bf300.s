@@ -35,7 +35,8 @@ main:
 	incl	%edi		# Set %edi to 1, for write
 	cmpl	%edx, %eax	# EOF ? (%eax < 1)
 	jl	.Leof
-	movb	(%rsi), %al
+	movb	(%rsi), %al	# cmpb imm, %al is the smallest cmp
+	leal	.LSleft, %esi	# Preload first string
 	cmpb	$60, %al	# '<' ?
 	je	.Lleft
 	cmpb	$62, %al	# '>' ?
@@ -71,40 +72,36 @@ main:
 	pushq	$1
 	popq	%rax		# _exit(%edi);
 	syscall
-.Lleft:
-	leal	.LSleft, %esi
-	jmp	.Lleftright
 .Lright:
-	leal	.LSright, %esi
-.Lleftright:
+	addl	%ebx, %esi	# aka, %esi + 4
+.Lleft:
 	pushq	%rbx		# aka, 4
 	jmp	.Lwrite
 .Ldec:
-	leal	.LSdec, %esi
-	jmp	.Ldecinc
+	subl	$5, %esi	# 13 - 5 = 8
 .Linc:
-	leal	.LSinc, %esi
+	addl	$13, %esi
 .Ldecinc:
 	pushq	$5
 	jmp	.Lwrite
 .Lgetchar:
-	leal	.LSgetchar, %esi
+	addl	$18, %esi
 	jmp	.Lgetcharputchar
 .Lputchar:
-	leal	.LSputchar, %esi
+	addl	$31, %esi
 .Lgetcharputchar:
 	pushq	$13
 	jmp	.Lwrite
 .Lopenloop:
 	incl	%ebp		# Increment loop counter
-	leal	.LSopenloop, %esi
+	addl	$44, %esi
 	pushq	$10
 	jmp	.Lwrite
 .Lcloseloop:
 	decl	%ebp		# Decrement loop counter
 	cmpl	$-1, %ebp	# Loop counter < 0 ?
 	je	.Lexit		# %edi == 1 (from the write(2) call)
-	leal	.LScloseloop, %esi
+	addl	$89, %esi
 	pushq	%rdi		# %rdi == 1 (from the write(2) call)
 	jmp	.Lwrite
 

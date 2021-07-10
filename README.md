@@ -1,7 +1,6 @@
 bf300
 =====
-`bf300` is a Brainfuck compiler under 300 bytes (sans ELF
-overhead).
+`bf300` is a Brainfuck compiler under 300 bytes.
 
 It probably only works on
 [OpenBSD](https://www.openbsd.org/)/amd64
@@ -33,7 +32,7 @@ Size
 ```
 $ size bf300.o
 text    data    bss     dec     hex
-286     0       0       286     11e
+253     0       0       253     fd
 ```
 
 License
