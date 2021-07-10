@@ -19,7 +19,7 @@
 main:
 	incl	%edi		# Write prologue
 	leal	.LSprologue, %esi
-	movb	$26, %dl
+	movb	$21, %dl
 	jmp	.Lwrite
 .Lparse:
 	movb	$3, %al		# Load read(2) system call
@@ -95,7 +95,7 @@ main:
 	jmp	.Lwrite
 
 .LSprologue:
-	.ascii	"char a[65536],*p=a;main(){"	# 26
+	.ascii	"a[65536],*p=a;main(){"	# 21
 
 .LS:
 	.ascii	"--p;"		# 4
