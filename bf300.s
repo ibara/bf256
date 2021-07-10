@@ -17,18 +17,17 @@
 	.text
 	.globl	main
 main:
-	pushq	$3
-	popq	%rbp		# Store read(2) system call
 	pushq	$4
 	popq	%rbx		# Store write(2) system call
-	xorl	%r15d, %r15d	# Loop counter
+	xorl	%ebp, %ebp	# Loop counter
 	pushq	$1
 	popq	%rdi		# Write prologue
 	leal	.LSprologue, %esi
 	pushq	$26
 	jmp	.Lwrite
 .Lparse:
-	movl	%ebp, %eax	# Read next character in stream
+	pushq	$3
+	popq	%rax		# Load read(2) system call
 	movl	%edi, %edx	# Read one character (%edi == 1)
 	xorl	%edi, %edi	# Read from stdin
 	leaq	(%rsp), %rsi	# Read into (%rsp)
@@ -36,21 +35,22 @@ main:
 	incl	%edi		# Set %edi to 1, for write
 	cmpl	%edx, %eax	# EOF ? (%eax < 1)
 	jl	.Leof
-	cmpb	$60, (%rsi)	# '<' ?
+	movb	(%rsi), %al
+	cmpb	$60, %al	# '<' ?
 	je	.Lleft
-	cmpb	$62, (%rsi)	# '>' ?
+	cmpb	$62, %al	# '>' ?
 	je	.Lright
-	cmpb	$45, (%rsi)	# '-' ?
+	cmpb	$45, %al	# '-' ?
 	je	.Ldec
-	cmpb	$43, (%rsi)	# '+' ?
+	cmpb	$43, %al	# '+' ?
 	je	.Linc
-	cmpb	$44, (%rsi)	# ',' ?
+	cmpb	$44, %al	# ',' ?
 	je	.Lgetchar
-	cmpb	$46, (%rsi)	# '.' ?
+	cmpb	$46, %al	# '.' ?
 	je	.Lputchar
-	cmpb	$91, (%rsi)	# '[' ?
+	cmpb	$91, %al	# '[' ?
 	je	.Lopenloop
-	cmpb	$93, (%rsi)	# ']' ?
+	cmpb	$93, %al	# ']' ?
 	je	.Lcloseloop
 	jmp	.Lparse		# Comment character, skip.
 .Lwrite:
@@ -59,7 +59,7 @@ main:
 	syscall			# write(1, string, sizeof(string));
 	jmp	.Lparse
 .Leof:
-	cmpl	%edx, %r15d	# Loop counter < 1 ? (i.e., 0)
+	cmpl	%edx, %ebp	# Loop counter < 1 ? (i.e., 0)
 	jge	.Lexit
 	leal	.LSepilogue, %esi
 	pushq	$11
@@ -96,13 +96,13 @@ main:
 	pushq	$13
 	jmp	.Lwrite
 .Lopenloop:
-	incl	%r15d		# Increment loop counter
+	incl	%ebp		# Increment loop counter
 	leal	.LSopenloop, %esi
 	pushq	$10
 	jmp	.Lwrite
 .Lcloseloop:
-	decl	%r15d		# Decrement loop counter
-	cmpl	$-1, %r15d	# Loop counter < 0 ?
+	decl	%ebp		# Decrement loop counter
+	cmpl	$-1, %ebp	# Loop counter < 0 ?
 	je	.Lexit		# %edi == 1 (from the write(2) call)
 	leal	.LScloseloop, %esi
 	pushq	%rdi		# %rdi == 1 (from the write(2) call)
