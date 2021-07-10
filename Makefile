@@ -1,13 +1,13 @@
-# bf300 Makefile
+# bf256 Makefile
 
 all:
 	gas -g -o rt.o rt.s
-	gas -g -o bf300.o bf300.s
-	ld -e main -nostdlib -nopie -o bf300 rt.o bf300.o
-	strip bf300
-	strip -R .bss bf300
-	strip -R .comment bf300
-	strip -R .data bf300
+	gas -g -o bf256.o bf256.s
+	ld -e main -nostdlib -nopie -o bf256 rt.o bf256.o
+	strip bf256
+	strip -R .bss bf256
+	strip -R .comment bf256
+	strip -R .data bf256
 
 clean:
-	rm -rf bf300 bf300.o rt.o bf300.core
+	rm -rf bf256 bf256.o rt.o bf256.core

@@ -17,20 +17,20 @@
 	.text
 	.globl	main
 main:
-	incl	%edi		# Write prologue
+	popq	%rdi		# Write prologue (argc == 1, hopefully)
 	leal	.LSprologue, %esi
 	movb	$21, %dl
 	jmp	.Lwrite
 .Lparse:
 	movb	$3, %al		# Load read(2) system call
-	movl	%edi, %edx	# Read one character (%edi == 1)
+	movb	$1, %dl		# Read one character
 	xorl	%edi, %edi	# Read from stdin
-	leaq	(%rsp), %rsi	# Read into (%rsp)
+	leaq	(%rsp), %rsi	# Read into top of stack
 	syscall			# read(0, (%rsp), 1);
 	incl	%edi		# Set %edi to 1, for write
 	xchg	%ebp, %eax	# Store return value in %ebp
 	movb	(%rsi), %al	# cmpb imm, %al is the smallest cmp
-	leal	.LS, %esi	# Preload first string
+	leal	.LS, %esi	# Preload string
 	cmpl	%edx, %ebp	# EOF ? (%ebp < 1)
 	jl	.Leof
 	cmpb	$60, %al	# '<' ?
@@ -49,7 +49,7 @@ main:
 	je	.Lopenloop
 	cmpb	$93, %al	# ']' ?
 	je	.Lcloseloop
-	jmp	.Lparse		# Comment character, skip.
+	jmp	.Lparse		# Comment character, skip
 .Lwrite:
 	movb	$4, %al
 	syscall			# write(1, string, length);
@@ -58,7 +58,7 @@ main:
 	cmpl	%edx, %ebx	# Loop counter < 1 ? (i.e., 0)
 	jge	.Lexit
 	addl	$54, %esi
-	movb	$11, %dl
+	movb	$10, %dl
 	movb	$4, %al
 	syscall
 	xorl	%edi, %edi	# Get ready to exit
@@ -107,4 +107,3 @@ main:
 	.ascii	"while(*p){"	# 10
 	.ascii	"return 0;"	# 9
 	.ascii	"}"		# 1
-	.ascii	"\n"		# 1

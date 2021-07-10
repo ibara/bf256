@@ -1,6 +1,6 @@
-bf300
+bf256
 =====
-`bf300` is a Brainfuck compiler under 300 bytes.
+`bf256` is a Brainfuck compiler under 256 bytes in size.
 
 It probably only works on
 [OpenBSD](https://www.openbsd.org/)/amd64
@@ -9,9 +9,7 @@ as-is.
 Write-up
 --------
 See the
-[blog post](https://briancallahan.net/blog/20210710).
-
-(Blog post forthcoming.)
+[blog post](https://briancallahan.net/blog/20210710.html).
 
 Building
 --------
@@ -20,19 +18,27 @@ Just run `make`.
 Running
 -------
 ```
-$ bf300 < input.bf > output.c
+$ bf256 < input.bf > output.c
 ```
 Alternatively:
 ```
-$ bf300 < input.bf | cc -x c -
+$ bf256 < input.bf | cc -x c -
 ```
 
 Size
 ----
+Compiler alone:
 ```
-$ size bf300.o
+$ size bf256.o
 text    data    bss     dec     hex
-233     0       0       233     e9
+231     0       0       231     e7
+```
+
+With overhead:
+```
+$ size bf256
+text    data    bss     dec     hex
+255     0       0       255     ff
 ```
 
 License
