@@ -59,8 +59,7 @@ main:
 	cmpl	%edx, %ebx	# Loop counter < 1 ? (i.e., 0)
 	jge	.Lexit
 	addl	$54, %esi
-	pushq	$11
-	popq	%rdx
+	movb	$11, %dl
 	movb	$4, %al
 	syscall
 	xorl	%edi, %edi	# Get ready to exit
