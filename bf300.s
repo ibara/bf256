@@ -18,9 +18,7 @@
 	.globl	main
 main:
 	movb	$4, %bl		# Store write(2) system call
-	xorl	%ebp, %ebp	# Loop counter
-	pushq	$1
-	popq	%rdi		# Write prologue
+	incl	%edi		# Write prologue
 	leal	.LSprologue, %esi
 	pushq	$26
 	jmp	.Lwrite
