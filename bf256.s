@@ -17,7 +17,7 @@
 	.text
 	.globl	main
 main:
-	popq	%rdi		# Write prologue (argc == 1, hopefully)
+	incl	%edi		# Write prologue
 	leal	.LSprologue, %esi
 	movb	$21, %dl
 	jmp	.Lwrite
@@ -50,6 +50,10 @@ main:
 	cmpb	$93, %al	# ']' ?
 	je	.Lcloseloop
 	jmp	.Lparse		# Comment character, skip
+.Lright:
+	addl	$4, %esi
+.Lleft:
+	movb	$4, %dl
 .Lwrite:
 	movb	$4, %al
 	syscall			# write(1, string, length);
@@ -65,11 +69,6 @@ main:
 .Lexit:
 	movb	$1, %al		# _exit(%edi);
 	syscall
-.Lright:
-	addl	$4, %esi
-.Lleft:
-	movb	$4, %dl
-	jmp	.Lwrite
 .Ldec:
 	subl	$5, %esi	# 13 - 5 = 8
 .Linc:
@@ -91,7 +90,6 @@ main:
 	decl	%ebx		# Decrement loop counter
 	js	.Lexit		# %ebx < 0 ? (%rdi == 1 from the write(2) call)
 	addl	$63, %esi
-	movb	$1, %dl
 	jmp	.Lwrite
 
 .LSprologue:
