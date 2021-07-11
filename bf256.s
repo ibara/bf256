@@ -61,7 +61,7 @@ main:
 .Leof:
 	cmpl	%edx, %ebx	# Loop counter < 1 ? (i.e., 0)
 	jge	.Lexit
-	addl	$54, %esi
+	addl	$53, %esi
 	movb	$10, %dl
 	movb	$4, %al
 	syscall
@@ -76,20 +76,20 @@ main:
 	movb	$5, %dl
 	jmp	.Lwrite
 .Lgetchar:
-	subl	$13, %esi	# 31 - 13 = 18
+	subl	$12, %esi	# 30 - 12 = 18
 .Lputchar:
-	addl	$31, %esi
+	addl	$30, %esi
 	movb	$13, %dl
 	jmp	.Lwrite
 .Lopenloop:
 	incl	%ebx		# Increment loop counter
-	addl	$44, %esi
+	addl	$43, %esi
 	movb	$10, %dl
 	jmp	.Lwrite
 .Lcloseloop:
 	decl	%ebx		# Decrement loop counter
 	js	.Lexit		# %ebx < 0 ? (%rdi == 1 from the write(2) call)
-	addl	$63, %esi
+	addl	$62, %esi
 	jmp	.Lwrite
 
 .LSprologue:
@@ -101,7 +101,7 @@ main:
 	.ascii	"--*p;"		# 5
 	.ascii	"++*p;"		# 5
 	.ascii	"*p=getchar();"	# 13
-	.ascii	"putchar(*p); "	# 13
+	.ascii	"putchar(*p);"	# 12
 	.ascii	"while(*p){"	# 10
 	.ascii	"return 0;"	# 9
 	.ascii	"}"		# 1
