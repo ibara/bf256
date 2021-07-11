@@ -62,7 +62,6 @@ main:
 	cmpl	%edx, %ebx	# Loop counter < 1 ? (i.e., 0)
 	jge	.Lexit
 	addl	$53, %esi
-	movb	$10, %dl
 	movb	$4, %al
 	syscall
 	xorl	%edi, %edi	# Get ready to exit
@@ -89,7 +88,7 @@ main:
 .Lcloseloop:
 	decl	%ebx		# Decrement loop counter
 	js	.Lexit		# %ebx < 0 ? (%rdi == 1 from the write(2) call)
-	addl	$62, %esi
+	addl	$53, %esi
 	jmp	.Lwrite
 
 .LSprologue:
@@ -103,5 +102,4 @@ main:
 	.ascii	"*p=getchar();"	# 13
 	.ascii	"putchar(*p);"	# 12
 	.ascii	"while(*p){"	# 10
-	.ascii	"return 0;"	# 9
 	.ascii	"}"		# 1
