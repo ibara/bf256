@@ -50,10 +50,10 @@ main:
 	cmpb	$93, %al	# ']' ?
 	je	.Lcloseloop
 	jmp	.Lparse		# Comment character, skip
-.Lright:
-	addl	$4, %esi
-.Lleft:
-	movb	$4, %dl
+.Linc:
+	addl	$6, %esi
+.Ldec:
+	movb	$6, %dl
 .Lwrite:
 	movb	$4, %al
 	syscall			# write(1, string, length);
@@ -61,44 +61,42 @@ main:
 .Leof:
 	cmpl	%edx, %ebx	# Loop counter < 1 ? (i.e., 0)
 	jge	.Lexit
-	addl	$53, %esi
+	addl	$47, %esi
 	movb	$4, %al
 	syscall
 	xorl	%edi, %edi	# Get ready to exit
 .Lexit:
 	movb	$1, %al		# _exit(%edi);
 	syscall
-.Ldec:
-	subl	$5, %esi	# 13 - 5 = 8
-.Linc:
-	addl	$13, %esi
+.Lleft:
+	subl	$6, %esi	# 7 - 6 = 1
+.Lright:
+	addl	$7, %esi
 	movb	$5, %dl
 	jmp	.Lwrite
 .Lgetchar:
-	subl	$12, %esi	# 30 - 12 = 18
+	subl	$12, %esi	# 24 - 12 = 12
 .Lputchar:
-	addl	$30, %esi
+	addl	$24, %esi
 	movb	$13, %dl
 	jmp	.Lwrite
 .Lopenloop:
 	incl	%ebx		# Increment loop counter
-	addl	$43, %esi
+	addl	$37, %esi
 	movb	$10, %dl
 	jmp	.Lwrite
 .Lcloseloop:
 	decl	%ebx		# Decrement loop counter
 	js	.Lexit		# %ebx < 0 ? (%rdi == 1 from the write(2) call)
-	addl	$53, %esi
+	addl	$47, %esi
 	jmp	.Lwrite
 
 .LSprologue:
 	.ascii	"a[65536],*p=a;main(){"	# 21
 
 .LS:
-	.ascii	"--p;"		# 4
-	.ascii	"++p;"		# 4
-	.ascii	"--*p;"		# 5
-	.ascii	"++*p;"		# 5
+	.ascii	"*p-=1;"	# 6
+	.ascii	"*p+=1;"	# 6
 	.ascii	"*p=getchar();"	# 13
 	.ascii	"putchar(*p);"	# 12
 	.ascii	"while(*p){"	# 10

@@ -31,14 +31,14 @@ Compiler alone:
 ```
 $ size bf256.o
 text    data    bss     dec     hex
-216     0       0       216     d8
+210     0       0       210     d2
 ```
 
 With overhead:
 ```
 $ size bf256
 text    data    bss     dec     hex
-240     0       0       240     f0
+234     0       0       234     ea
 ```
 
 License
