@@ -48,8 +48,11 @@ main:
 	cmpb	$91, %al	# '[' ?
 	je	.Lopenloop
 	cmpb	$93, %al	# ']' ?
-	je	.Lcloseloop
-	jmp	.Lparse		# Comment character, skip
+	jne	.Lparse		# Comment character, skip
+	decl	%ebx		# Decrement loop counter
+	js	.Lexit		# %ebx < 0 ? (%rdi == 1 from the write(2) call)
+	addl	$47, %esi
+	jmp	.Lwrite
 .Linc:
 	addl	$6, %esi
 .Ldec:
@@ -84,11 +87,6 @@ main:
 	incl	%ebx		# Increment loop counter
 	addl	$37, %esi
 	movb	$10, %dl
-	jmp	.Lwrite
-.Lcloseloop:
-	decl	%ebx		# Decrement loop counter
-	js	.Lexit		# %ebx < 0 ? (%rdi == 1 from the write(2) call)
-	addl	$47, %esi
 	jmp	.Lwrite
 
 .LSprologue:
