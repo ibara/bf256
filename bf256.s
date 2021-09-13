@@ -23,7 +23,7 @@ main:
 	jmp	.Lwrite
 .Lparse:
 	movb	$3, %al		# Load read(2) system call
-	movb	$1, %dl		# Read one character
+	xchg	%edi, %edx	# Read one character
 	xorl	%edi, %edi	# Read from stdin
 	leaq	(%rsp), %rsi	# Read into top of stack
 	syscall			# read(0, (%rsp), 1);
@@ -69,7 +69,7 @@ main:
 	syscall
 	xorl	%edi, %edi	# Get ready to exit
 .Lexit:
-	movb	$1, %al		# _exit(%edi);
+	xchg	%edx, %eax	# _exit(%edi);
 	syscall
 .Lleft:
 	subl	$6, %esi	# 7 - 6 = 1
